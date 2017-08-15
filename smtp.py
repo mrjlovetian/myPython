@@ -1,19 +1,38 @@
-import smtplib
+#! /usr/bin/env python
+#coding=utf-8
+
 from email.mime.text import MIMEText
-msg = MIMEText('hello, send by Python...', 'plain', 'utf-8')
+from email.header import Header
+from smtplib import SMTP_SSL
 
-#输入口令
-from_add = input('From: ')
-password = input('Password: ')
 
-#输入收件人地址
-to_address = input('To: ')
+#qq邮箱smtp服务器
+host_server = 'smtp.exmail.qq.com'
+#sender_qq为发件人的qq号码
+sender_qq = 'yuhongjiang642.com'
+#pwd为qq邮箱的授权码
+pwd = 'vin4kUuXT92W4aTj' ## xh**********bdc
+#发件人的邮箱
+sender_qq_mail = 'yuhongjiang642.com'
+#收件人邮箱
+receiver = '409360559@qq.com'
 
-#输入服务器地址
-smtp_server = input('STMP: ')
+#邮件的正文内容
+mail_content = '你好，这是使用python登录qq邮箱发邮件的测试'
+#邮件标题
+mail_title = 'Maxsu的邮件'
 
-server = smtplib.SMTP(smtp_server, 25)#SMTP协议默认端口号是25
-server.set_debuglevel(1)
-server.login(from_add, password)
-server.sendmail(from_add, [to_address], msg.as_string())
-server.quit()
+#ssl登录
+smtp = SMTP_SSL(host_server)
+
+#set-debuglevel()用来调试的，参数为1表示启动调试，参数为0关闭调试
+smtp.set_debuglevel(1)
+smtp.ehlo(host_server)
+smtp.login(sender_qq, pwd)
+
+msg = MIMEText(mail_content, "plain", 'utf-8')
+msg["Subject"] = Header(mail_title, 'utf-8')
+msg["From"] = sender_qq_mail
+msg["To"] = receiver
+smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
+smtp.quit()
