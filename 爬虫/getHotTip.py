@@ -1,26 +1,26 @@
-#coding=utf-8
+# -*- coding: utf-8 -*-
 
-import urllib2
-import re
-import MySQLdb
+from bs4 import BeautifulSoup
+import urllib.request
 
-#connect方法获取用于创建的数据库链接，里面可以指定参数，这一步只是连接到数据库，操作数据库还是需要下面的游标
-conn = MySQLdb.connect(host='localhost', db='yhj', root='root', passwd='897011805', charset='utf8')
+html_doc = """
+<html><head><title>The Dormouse's story</title></head>
+<body>
+<p class="title"><b>The Dormouse's story</b></p>
 
-#通过获取的conn获取cursor方法创建游标
-cur = conn.cursor()
+<p class="story">Once upon a time there were three little sisters; and their names were
+<a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
+<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+and they lived at the bottom of a well.</p>
 
-url = 'http://www.zhihu.com/topic/19607535/top-answers'
-netthings = urllib2.urlopen(url).read()
+<p class="story">...</p>
+"""
 
-#re模块的findall方法可以以列表的形式返回匹配的字符串，re.S表示多行匹配
-list = re.findall('<a class="question_link"(.*?)/a>', netthings, re.S)
+html = urllib.request.urlopen("http://www.baidu.com").read()
 
-p = '>(.*?)<'
-for x in list:
-    title = re.search(p, x, re.S).group(1)
-    sql = "insert into hotTip (title) values ('%s')" % title
-    print (sql)
-    cur.execute(sql)
-    conn.commit()
-conn.close()
+soup = BeautifulSoup(html_doc, 'html.parser')
+
+print (soup.find_all('a'))
+
+
